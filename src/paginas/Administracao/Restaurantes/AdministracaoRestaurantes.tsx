@@ -16,20 +16,31 @@ import axios from 'axios'
 
 const AdministracaoRestaurantes = () => {
     const [restaurantes, setRestaurantes] = useState<IRestaurante[]>([])
+    const [deleteMade, setDeleteMade] = useState<boolean>(false)
 
-    useEffect(()=>{
+    useEffect(() => {
         axios.get('http://0.0.0.0:8000/api/v2/restaurantes/')
-        .then(response => setRestaurantes(response.data))
-    })
+            .then(response => setRestaurantes(response.data))
+        return (
+            setDeleteMade(false)
+        )
+    }, [deleteMade])
 
-    function deletarItem(itemId:number):void{
-        axios.delete(`http://0.0.0.0:8000/api/v2/restaurantes/${itemId}/`)
+    function deletarItem(restaurante: IRestaurante): void {
+        const queroDeletar = window.confirm(`Tem certeza que quer deletar ${restaurante.nome}?`)
+        if (queroDeletar) {
+            axios.delete(`http://0.0.0.0:8000/api/v2/restaurantes/${restaurante.id}/`);
+            setDeleteMade(true)
+        } else {
+            window.alert("Restaurante não foi deletado")
+        }
     }
 
 
     return (
-        <Container sx={{ marginTop: "100px", width:"600px" }}>
-            <Link to="/adm/restaurantes/novo">Cadstrar Novo</Link>
+        <Container sx={{ marginTop: "100px", width: "600px" }}>
+            <Link to="/adm/restaurantes/novo"><Button style={{margin:10}} variant='contained' color='primary'>Novo Restaurante</Button></Link>
+            <Link to="/"><Button style={{margin:10}} variant='contained' color='secondary'>Voltar</Button></Link>
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead>
@@ -41,16 +52,22 @@ const AdministracaoRestaurantes = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {restaurantes.map((restaurante)=>{
-                            return(
-                        <TableRow key={restaurante.id}>
-                            <TableCell> {restaurante.nome}</TableCell>
-                            <TableCell align='center'> (E) </TableCell>
-                            <TableCell align='center'> (O) </TableCell>
-                            <TableCell align='center'>
-                                <Button onClick={()=>deletarItem(restaurante.id)}>XX</Button>
-                            </TableCell>
-                        </TableRow>
+                        {restaurantes.map((restaurante) => {
+                            return (
+                                <TableRow key={restaurante.id}>
+                                    <TableCell> {restaurante.nome}</TableCell>
+                                    <TableCell align='center'>
+                                        <Link to={`/adm/restaurantes/${restaurante.id}`}>
+                                            <Button variant='outlined' color='success'>
+                                                EDIT
+                                            </Button>
+                                        </Link>
+                                    </TableCell>
+                                    <TableCell align='center'> (O) </TableCell>
+                                    <TableCell align='center'>
+                                        <Button variant='outlined' color='error' onClick={() => deletarItem(restaurante)}>DEL</Button>
+                                    </TableCell>
+                                </TableRow>
 
                             )
                         })}
