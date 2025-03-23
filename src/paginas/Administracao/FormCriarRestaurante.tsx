@@ -1,7 +1,7 @@
-import { Button, Container, TextField } from "@mui/material"
-import axios from "axios"
+import { Link, Button, Container, TextField, Typography } from "@mui/material"
+import { httpRestaurantes } from "../../http"
 import { useEffect, useState } from "react"
-import { Link, useParams } from "react-router-dom"
+import { useParams } from "react-router-dom"
 import IRestaurante from "../../interfaces/IRestaurante"
 
 const FormCriarRestaurante = () => {
@@ -12,20 +12,20 @@ const FormCriarRestaurante = () => {
 
   useEffect(() => {
     parametros.id &&
-      axios.get<IRestaurante>(`http://localhost:8000/api/v2/restaurantes/${parametros.id}/`)
+      httpRestaurantes.get<IRestaurante>(`${parametros.id}/`)
         .then(response => setRestauranteNome(response.data.nome))
   }, [parametros])
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>): void {
     event.preventDefault()
     if (parametros.id) {
-      axios.put(`http://localhost:8000/api/v2/restaurantes/${parametros.id}/`, {"nome":restauranteNome})
-      .then(()=>{
-        alert(`O nome foi modificado para ${restauranteNome} com sucesso!`)
-        window.location.href = 'http://localhost:3000/adm/restaurantes/'
-      })
+      httpRestaurantes.put(`${parametros.id}/`, { "nome": restauranteNome })
+        .then(() => {
+          alert(`O nome foi modificado para ${restauranteNome} com sucesso!`)
+          window.location.href = 'http://localhost:3000/adm/restaurantes/'
+        })
     } else {
-      axios.post('http://0.0.0.0:8000/api/v2/restaurantes/', { "nome": restauranteNome })
+      httpRestaurantes.post("", { "nome": restauranteNome })
         .then(() => {
           alert("Foi criado o restaurante: " + restauranteNome)
           window.location.href = 'http://localhost:3000/adm/restaurantes/'
@@ -33,10 +33,17 @@ const FormCriarRestaurante = () => {
     }
   }
   return (
-    <Container sx={{ marginTop: "100px", width: "400px" }}>
-      <Link to="/adm/restaurantes/">Voltar</Link>
-      <form onSubmit={handleSubmit} style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 15 }}>
-        <TextField variant="filled" id="Nome Usuario" value={restauranteNome}
+    <Container sx={{ marginTop: "100px", width: "400px", textAlign: "center" }}>
+      <Link href="/adm/restaurantes/">Voltar</Link>
+      <Typography mt={2} component="h1" variant="h5">Formulário de Cadastro</Typography>
+      <form onSubmit={handleSubmit}
+        style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 15 }}>
+        <TextField variant="filled"
+          color="primary"
+          required
+          id="Nome Usuario"
+          helperText="Campo obrigatório"
+          value={restauranteNome}
           onChange={(e) => { setRestauranteNome(e.target.value) }} />
         <Button type="submit" variant="outlined" color="success"> Cadastrar </Button>
       </form>

@@ -10,17 +10,18 @@ import {
     TableRow,
     TableCell,
     TableBody,
-    TextField
+    TextField,
+    Box
 } from '@mui/material'
 import IRestaurante from '../../../interfaces/IRestaurante'
-import axios from 'axios'
+import { httpRestaurantes } from '../../../http'
 
 const AdministracaoRestaurantes = () => {
     const [restaurantes, setRestaurantes] = useState<IRestaurante[]>([])
     const [deleteMade, setDeleteMade] = useState<boolean>(false)
 
     useEffect(() => {
-        axios.get('http://0.0.0.0:8000/api/v2/restaurantes/')
+        httpRestaurantes.get('')
             .then(response => setRestaurantes(response.data))
         return (
             setDeleteMade(false)
@@ -30,7 +31,7 @@ const AdministracaoRestaurantes = () => {
     function deletarItem(restaurante: IRestaurante): void {
         const queroDeletar = window.confirm(`Tem certeza que quer deletar ${restaurante.nome}?`)
         if (queroDeletar) {
-            axios.delete(`http://0.0.0.0:8000/api/v2/restaurantes/${restaurante.id}/`);
+            httpRestaurantes.delete(`${restaurante.id}/`);
             setDeleteMade(true)
             window.alert("Restaurante excluido com sucesso!")
         } else {
@@ -38,7 +39,7 @@ const AdministracaoRestaurantes = () => {
         }
     }
     function changeFiltrar(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void {
-        axios.get('http://0.0.0.0:8000/api/v2/restaurantes/', {
+        httpRestaurantes.get('', {
             params: {
                 search: e.target.value
             }
@@ -55,11 +56,18 @@ const AdministracaoRestaurantes = () => {
 
     return (
         <Container sx={{ marginTop: "100px", width: "600px" }}>
-            <div style={{ width: "540px", display: "flex", justifyContent: "space-between", marginBottom: "10px" }}>
-                <Link to="/adm/restaurantes/novo"><Button style={{ margin: 10 }} variant='contained' color='primary'>Novo Restaurante</Button></Link>
-                <Link to="/"><Button style={{ margin: 10 }} variant='contained' color='secondary'>Voltar</Button></Link>
-                <TextField id="filtrar" label="Filtrar" variant="outlined" onChange={changeFiltrar} />
-            </div>
+            <Box sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginBottom: "5px",
+                padding: "5px",
+                width: '545px',
+                alignItems: "center"
+            }}>
+                <Link to="/adm/restaurantes/novo"><Button variant='contained' color='primary'>Novo Restaurante</Button></Link>
+                <Link to="/"><Button variant='contained' color='secondary'>Voltar</Button></Link>
+                <TextField id="filtrar" size='small' color="secondary" label="Filtrar" onChange={changeFiltrar} />
+            </Box>
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead>

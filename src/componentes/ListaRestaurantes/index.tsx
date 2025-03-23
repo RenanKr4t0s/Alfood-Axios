@@ -3,10 +3,10 @@ import IRestaurante from '../../interfaces/IRestaurante';
 import IPaginacao from '../../interfaces/IPaginacao';
 import style from './ListaRestaurantes.module.scss';
 import Restaurante from './Restaurante';
-import axios from 'axios';
-import { Button, TextField } from '@mui/material';
+import { httpV1Restaurantes } from '../../http';
+import { Box, Button, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 
-interface IRetornoRenomeado{
+interface IRetornoRenomeado {
   quantidade: number;
   listaRestaurantes: IRestaurante[];
   proximaPagina: string;
@@ -15,26 +15,27 @@ interface IRetornoRenomeado{
 
 const ListaRestaurantes = () => {
   const [retorno, setRetorno] = useState<IRetornoRenomeado>({
-    quantidade:0,
+    quantidade: 0,
     listaRestaurantes: [],
     proximaPagina: '',
     paginaAnterior: ''
   })
-  
+
   const [restaurantePesquisado, setRestaurantePesquisado] = useState<string>('')
+  const [ordem, setOrdem] = useState<string>('nome')
 
   function getRestaurantes(
-    url: string = "http://localhost:8000/api/v1/restaurantes/",
     buscar?: string): void {
-    axios.get<IPaginacao<IRestaurante>>(url, {
+    httpV1Restaurantes.get<IPaginacao<IRestaurante>>('', {
       params: {
-        search: buscar
+        search: buscar,
+        ordering: ordem
       }
     })
-      .then(response=>{
-        const {count, results, previous, next} = response.data
+      .then(response => {
+        const { count, results, previous, next } = response.data
         setRetorno({
-          quantidade:count,
+          quantidade: count,
           listaRestaurantes: results,
           proximaPagina: next,
           paginaAnterior: previous
@@ -45,7 +46,7 @@ const ListaRestaurantes = () => {
   }
 
   function pesquisaRestaurante() {
-    getRestaurantes(undefined , restaurantePesquisado)
+    getRestaurantes(restaurantePesquisado)
   }
 
   useEffect(() => {
@@ -53,10 +54,23 @@ const ListaRestaurantes = () => {
   }, [])
 
   return (<section className={style.ListaRestaurantes}>
-    <div style={{ marginBottom: 30 }}>
-      <TextField style={{ width: 500 }} id="outlined-basic" label="Pesquise Restaurantes" variant="outlined" onChange={e => { setRestaurantePesquisado(e.target.value) }} />
+    <Box style={{ marginBottom: 30, display: "flex", gap: 3 }}>
+      <TextField style={{ width: 400 }} id="outlined-basic" label="Pesquise Restaurantes" variant="outlined" onChange={e => { setRestaurantePesquisado(e.target.value) }} />
+      <Box>
+        <InputLabel id="select-label">Ordenar Por:</InputLabel>
+        <Select
+          id="select-label"
+          label="Ordenar Por:"
+          defaultValue={"nome"}
+          value={ordem}
+          onChange={(e) => setOrdem(e.target.value)}
+        >
+          <MenuItem value={"id"}>Mais Antigo</MenuItem>
+          <MenuItem value={"nome"}>Nome</MenuItem>
+        </Select>
+      </Box>
       <Button style={{ marginLeft: 30, marginTop: 10 }} variant='outlined' color='primary' onClick={pesquisaRestaurante}>Pesquisar</Button>
-    </div>
+    </Box>
     <h1>Os restaurantes mais <em>bacanas</em>!</h1>
     {retorno.listaRestaurantes?.map(item => <Restaurante restaurante={item} key={item.id} />)}
     <Button variant='contained' color='primary'
