@@ -30,3 +30,8 @@ jeito de passar params para o endpoint.
       }
     })
 ```
+### no ListaRestaurantes
+
+Para tirar o monte de useState refatorei o código colocando tudo em um objeto "retorno"
+
+Também centralizei as funções diferentes de get em uma única função que, dependendo dos parametros passados faz atividades diferentes.

@@ -31,6 +31,7 @@ const AdministracaoRestaurantes = () => {
         if (queroDeletar) {
             axios.delete(`http://0.0.0.0:8000/api/v2/restaurantes/${restaurante.id}/`);
             setDeleteMade(true)
+            window.alert("Restaurante excluido com sucesso!")
         } else {
             window.alert("Restaurante não foi deletado")
         }
