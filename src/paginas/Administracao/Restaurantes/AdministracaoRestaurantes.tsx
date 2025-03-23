@@ -9,7 +9,8 @@ import {
     TableHead,
     TableRow,
     TableCell,
-    TableBody
+    TableBody,
+    TextField
 } from '@mui/material'
 import IRestaurante from '../../../interfaces/IRestaurante'
 import axios from 'axios'
@@ -36,12 +37,29 @@ const AdministracaoRestaurantes = () => {
             window.alert("Restaurante não foi deletado")
         }
     }
+    function changeFiltrar(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void {
+        axios.get('http://0.0.0.0:8000/api/v2/restaurantes/', {
+            params: {
+                search: e.target.value
+            }
+        })
+            .then((response) => {
+                setRestaurantes(response.data)
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+
+    }
 
 
     return (
         <Container sx={{ marginTop: "100px", width: "600px" }}>
-            <Link to="/adm/restaurantes/novo"><Button style={{margin:10}} variant='contained' color='primary'>Novo Restaurante</Button></Link>
-            <Link to="/"><Button style={{margin:10}} variant='contained' color='secondary'>Voltar</Button></Link>
+            <div style={{ width: "540px", display: "flex", justifyContent: "space-between", marginBottom: "10px" }}>
+                <Link to="/adm/restaurantes/novo"><Button style={{ margin: 10 }} variant='contained' color='primary'>Novo Restaurante</Button></Link>
+                <Link to="/"><Button style={{ margin: 10 }} variant='contained' color='secondary'>Voltar</Button></Link>
+                <TextField id="filtrar" label="Filtrar" variant="outlined" onChange={changeFiltrar} />
+            </div>
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead>
