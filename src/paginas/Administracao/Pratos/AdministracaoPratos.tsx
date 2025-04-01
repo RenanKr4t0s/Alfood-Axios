@@ -1,4 +1,6 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import IPrato from '../../../interfaces/IPrato'
+import { httpPratos } from '../../../http'
 import { Link as RouterLink } from 'react-router-dom'
 import {
     Button,
@@ -12,50 +14,48 @@ import {
     TableBody,
     TextField,
     Link,
+    AppBar
 } from '@mui/material'
-import IRestaurante from '../../../interfaces/IRestaurante'
-import { httpRestaurantes } from '../../../http'
 
-const AdministracaoRestaurantes = () => {
-    const [restaurantes, setRestaurantes] = useState<IRestaurante[]>([])
+const AdministracaoPratos = () => {
+    const [pratos, setPratos] = useState<IPrato[]>([])
     const [deleteMade, setDeleteMade] = useState<boolean>(false)
 
     useEffect(() => {
-        httpRestaurantes.get('')
-            .then(response => setRestaurantes(response.data))
+        httpPratos.get('')
+            .then(response => setPratos(response.data))
         return (
             setDeleteMade(false)
         )
     }, [deleteMade])
 
-    function deletarItem(restaurante: IRestaurante): void {
-        const queroDeletar = window.confirm(`Tem certeza que quer deletar ${restaurante.nome}?`)
+    function deletarItem(prato: IPrato): void {
+        const queroDeletar = window.confirm('Você quer mesmo deletar o prato?')
         if (queroDeletar) {
-            httpRestaurantes.delete(`${restaurante.id}/`);
+            httpPratos.delete(`${prato.id}/`);
             setDeleteMade(true)
-            window.alert("Restaurante excluido com sucesso!")
+            window.alert("Prato deletado com sucesso!")
         } else {
-            window.alert("Restaurante não foi deletado")
+            window.alert("Prato não foi deletado")
         }
     }
+
     function changeFiltrar(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void {
-        httpRestaurantes.get('', {
+        httpPratos.get('', {
             params: {
                 search: e.target.value
             }
         })
             .then((response) => {
-                setRestaurantes(response.data)
+                setPratos(response.data)
             })
             .catch((error) => {
                 console.log(error)
             })
-
     }
 
-
     return (
-        <Container sx={{ marginTop: "100px", width: "600px" }}>
+        <Container sx={{ marginTop: "100px", width: "800px" }}>
             <Paper elevation={3} sx={{ display: 'flex', padding: 1, margin: 3 }}>
                 <TextField sx={{ width: 400 }}
                     id="filtrar" size='small' color="secondary" label="Filtrar" onChange={changeFiltrar} />
@@ -64,37 +64,48 @@ const AdministracaoRestaurantes = () => {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Restaurante:</TableCell>
+                            <TableCell>Prato:</TableCell>
                             <TableCell align='center'>Editar</TableCell>
-                            <TableCell align='center'>Ver Pratos</TableCell>
+                            <TableCell align='center'>Tag</TableCell>
+                            <TableCell align='center'>Restaurante</TableCell>
+                            <TableCell align='center'>Imagem</TableCell>
                             <TableCell align='center'>Deletar</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {restaurantes.map((restaurante) => {
+                        {pratos.map((prato) => {
                             return (
-                                <TableRow key={restaurante.id}>
-                                    <TableCell> {restaurante.nome}</TableCell>
+                                <TableRow key={prato.id}>
+                                    <TableCell>{prato.nome}</TableCell>
                                     <TableCell align='center'>
-                                        <Link component={RouterLink} to={`/adm/restaurantes/${restaurante.id}`}>
+                                        <Link component={RouterLink} to={`/adm/prato/${prato.id}`}>
                                             <Button variant='outlined' color='success'>
                                                 EDIT
                                             </Button>
                                         </Link>
                                     </TableCell>
-                                    <TableCell align='center'> (O) </TableCell>
+                                    <TableCell align='center'>{prato.tag}</TableCell>
+                                    <TableCell align='center'>{prato.restaurante}</TableCell>
                                     <TableCell align='center'>
-                                        <Button variant='outlined' color='error' onClick={() => deletarItem(restaurante)}>DEL</Button>
+                                        <Link href={`${prato.imagem}`}>
+                                            <Button variant='outlined' color='success'>
+                                                Ver Imagem
+                                            </Button>
+                                        </Link>
+                                    </TableCell>
+                                    <TableCell align='center'>
+                                        <Button variant='outlined' color='error' onClick={() => deletarItem(prato)}>DEL</Button>
                                     </TableCell>
                                 </TableRow>
-
                             )
                         })}
                     </TableBody>
+
+
                 </Table>
             </TableContainer>
         </Container>
     )
 }
 
-export default AdministracaoRestaurantes
+export default AdministracaoPratos

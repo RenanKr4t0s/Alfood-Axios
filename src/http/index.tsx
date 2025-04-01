@@ -14,4 +14,8 @@ export const httpRestaurantes = axios.create({
     baseURL: basicUrl + 'v2/restaurantes/'
 })
 
+export const httpPratos = axios.create({
+    baseURL: basicUrl + 'v2/pratos/'
+})
+
 export default http;

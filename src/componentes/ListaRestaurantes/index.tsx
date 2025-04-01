@@ -54,7 +54,7 @@ const ListaRestaurantes = () => {
   }, [])
 
   return (<section className={style.ListaRestaurantes}>
-    <Box style={{ marginBottom: 30, display: "flex", gap: 3 }}>
+    <Box style={{ marginBottom: 30, display: "flex", gap: 10, alignItems: "flex-end" }}>
       <TextField style={{ width: 400 }} id="outlined-basic" label="Pesquise Restaurantes" variant="outlined" onChange={e => { setRestaurantePesquisado(e.target.value) }} />
       <Box>
         <InputLabel id="select-label">Ordenar Por:</InputLabel>
@@ -69,7 +69,9 @@ const ListaRestaurantes = () => {
           <MenuItem value={"nome"}>Nome</MenuItem>
         </Select>
       </Box>
-      <Button style={{ marginLeft: 30, marginTop: 10 }} variant='outlined' color='primary' onClick={pesquisaRestaurante}>Pesquisar</Button>
+      <Button variant='outlined' size='large'
+        color='primary'
+        onClick={pesquisaRestaurante}>Pesquisar</Button>
     </Box>
     <h1>Os restaurantes mais <em>bacanas</em>!</h1>
     {retorno.listaRestaurantes?.map(item => <Restaurante restaurante={item} key={item.id} />)}
