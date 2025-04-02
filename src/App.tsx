@@ -19,6 +19,7 @@ function App() {
         <Route path="/adm/restaurantes/:id" element={<FormCriarRestaurante />} />
         <Route path="/adm/pratos/" element={< AdministracaoPratos />} />
         <Route path="/adm/pratos/novo" element={< FormCriarPrato />} />
+        <Route path="/adm/pratos/:id" element={< FormCriarPrato />} />
       </Route>
     </Routes>
   );

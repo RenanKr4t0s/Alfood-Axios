@@ -115,9 +115,11 @@ agrupar a base do /admin
 
 ### Administração dos pratos
 
-Fazer a estrutura de pratos igual de restaurantes (fez copiar colar para tudo)
-Criar link na navbar
-Criar rota no router
-Adicionar campos da API => nome tag link pra imagem (descrição colocaria tooltip)
+- [x] Fazer a estrutura de pratos igual de restaurantes (fez copiar colar para tudo)
+- [x] Criar link na navbar
+- [x] Criar rota no router
+- [x] Adicionar campos da API => nome tag link pra imagem (descrição colocaria tooltip)
+- [x] Verificar se o AdministracaoPratos está funcionando
+- [x] Criar FormCriarPrato com base no FormCriarRestaurante
 
-- target blank criando um a rel noreferrer
+### Aula de 20 min para criar o form do prato (06.03)

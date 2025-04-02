@@ -1,4 +1,4 @@
-import { Link, Button, Container, TextField, Typography } from "@mui/material"
+import { Button, TextField, Typography, Paper } from "@mui/material"
 import { httpRestaurantes } from "../../http"
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
@@ -33,9 +33,8 @@ const FormCriarRestaurante = () => {
     }
   }
   return (
-    <Container sx={{ marginTop: "100px", width: "400px", textAlign: "center" }}>
-      <Link href="/adm/restaurantes/">Voltar</Link>
-      <Typography mt={2} component="h1" variant="h5">Formulário de Cadastro</Typography>
+    <Paper elevation={6} sx={{ marginTop: "100px", width: "400px", textAlign: "center", padding: 4 }}>
+      <Typography mt={2} component="h1" variant="h5">Criar Restaurante</Typography>
       <form onSubmit={handleSubmit}
         style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 15 }}>
         <TextField variant="filled"
@@ -47,7 +46,7 @@ const FormCriarRestaurante = () => {
           onChange={(e) => { setRestauranteNome(e.target.value) }} />
         <Button type="submit" variant="outlined" color="success"> Cadastrar </Button>
       </form>
-    </Container>
+    </Paper>
   )
 }
 
