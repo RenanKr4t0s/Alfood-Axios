@@ -78,7 +78,7 @@ const AdministracaoPratos = () => {
                                 <TableRow key={prato.id}>
                                     <TableCell>{prato.nome}</TableCell>
                                     <TableCell align='center'>
-                                        <Link component={RouterLink} to={`/adm/prato/${prato.id}`}>
+                                        <Link component={RouterLink} to={`/adm/pratos/${prato.id}`}>
                                             <Button variant='outlined' color='success'>
                                                 EDIT
                                             </Button>
