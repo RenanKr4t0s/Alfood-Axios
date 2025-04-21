@@ -12,13 +12,13 @@ interface RestauranteProps {
 const Restaurante = ({ restaurante }: RestauranteProps) => {
   const [listaPratros, setListaPratos] = useState<IPPrato[] | null>();
 
-  useEffect(()=>{
+  useEffect(() => {
     axios.get<IPPrato[]>(`http://0.0.0.0:8000/api/v1/restaurantes/${restaurante.id}/pratos/`)
-    .then(response=>{
-      setListaPratos(response.data)
-    })
-    .catch(error=> console.log(error))
-  },[restaurante])
+      .then(response => {
+        setListaPratos(response.data)
+      })
+      .catch(error => console.log(error))
+  }, [restaurante])
 
   return (<section className={estilos.Restaurante}>
     <div className={estilos.Titulo}>

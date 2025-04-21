@@ -1,5 +1,5 @@
-export default interface IPPrato {
-  id: number;
+export default interface IPPratoClean {
+  id: null;
   descricao: string;
   imagem: string;
   nome: string;

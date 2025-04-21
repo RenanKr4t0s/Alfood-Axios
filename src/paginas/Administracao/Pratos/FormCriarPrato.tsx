@@ -4,6 +4,8 @@ import http, { httpPratos, httpRestaurantes } from '../../../http'
 import { Button, FormControl, InputLabel, MenuItem, Paper, Select, TextField, Typography } from '@mui/material'
 import ITag from '../../../interfaces/ITag'
 import IRestaurante from '../../../interfaces/IRestaurante'
+import IPPrato from '../../../interfaces/IPPrato'
+import IPPratoClean from '../../../interfaces/IPratoClean'
 
 /* sudo nano /usr/share/X11/xkb/symbols/us
 
@@ -25,9 +27,36 @@ const FormCriarPrato = () => {
     const [pratoDescricao, setPratoDescricao] = useState<string>('')
     const [tags, setTags] = useState<ITag[]>([])
     const [tagSelected, setTagSelected] = useState<string>('')
-    const [restauranteSelected, setRestauranteSelected] = useState<string>('')
+    const [restauranteSelected, setRestauranteSelected] = useState<number>(0)
     const [restaurantes, setRestaurantes] = useState<IRestaurante[]>([])
-    const parametros = useParams()
+    const [idControl, setIdControl] = useState<number | null>(null)
+    const params = useParams()
+
+    const cleanObject: IPPratoClean = {
+        nome: '',
+        descricao: '',
+        tag: '',
+        id: null,
+        imagem: '',
+        restaurante: 0,
+    }
+
+    function setAllParams(prato: IPPrato | IPPratoClean) {
+        setPratoNome(prato.nome)
+        setPratoDescricao(prato.descricao)
+        setTagSelected(prato.tag)
+        setRestauranteSelected(prato.restaurante)
+    }
+    useEffect(() => {
+        if (params.id) {
+            httpPratos.get(`${params.id}/`)
+                .then(response => {
+                    console.log(response.data)
+                    setAllParams(response.data)
+                })
+            setIdControl(Number(params.id))
+        }
+    }, [params.id])
 
     useEffect(() => {
         http.get<{ tags: ITag[] }>('tags/').then(
@@ -41,7 +70,7 @@ const FormCriarPrato = () => {
             }
         )
 
-    }, [parametros])
+    }, [params])
 
     function salvarImagem(e: React.ChangeEvent<HTMLInputElement> | null) {
         if (e?.target.files) {
@@ -56,19 +85,43 @@ const FormCriarPrato = () => {
         formData.append("nome", pratoNome)
         formData.append("tag", tagSelected)
         formData.append("descricao", pratoDescricao)
-        formData.append("restaurante", restauranteSelected)
+        formData.append("restaurante", restauranteSelected.toString())
         if (pratoImagem) {
             formData.append("imagem", pratoImagem)
         }
-        httpPratos.request({
-            method: "POST",
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            },
-            data: formData
-        }).then(e =>
-            alert(`prato ${pratoNome} criado com sucesso`)
-        ).catch(e => alert("Ocorreu um erro na criação do prato " + e))
+        if (idControl) {
+            httpPratos.request(
+                {
+                    url: `${params.id}/`,
+                    method: "PUT",
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    },
+                    data: formData
+                }
+            )
+                .then(e => {
+                    alert(`prato ${pratoNome} atualizado com sucesso`)
+                    setIdControl(null)
+                }
+                )
+                .catch(e =>
+                    alert("Erro ao atualizar o prato" + e)
+                )
+        } else {
+            httpPratos.request({
+                method: "POST",
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+                data: formData
+            }).then(e => {
+                alert(`prato ${pratoNome} criado com sucesso`)
+                setIdControl(null)
+            }
+            ).catch(e => alert("Ocorreu um erro na criação do prato " + e))
+        }
+        setAllParams(cleanObject)
     }
 
     return (
@@ -110,14 +163,14 @@ const FormCriarPrato = () => {
                     <Select
                         labelId='restaurante-select'
                         value={restauranteSelected}
-                        onChange={e => { setRestauranteSelected(e.target.value) }}>
+                        onChange={e => { setRestauranteSelected(Number(e.target.value)) }}>
                         {restaurantes.map(restaurante =>
                             <MenuItem key={restaurante.id} value={restaurante.id}>{restaurante.nome}</MenuItem>
                         )}
                     </Select>
                 </FormControl>
                 <input type='file' onChange={salvarImagem} />
-                <Button type="submit" variant="outlined" color="success"> Cadastrar </Button>
+                <Button type="submit" variant="outlined" color="success"> {idControl ? 'Editar' : 'Cadastrar'} </Button>
             </form>
         </Paper>
     )

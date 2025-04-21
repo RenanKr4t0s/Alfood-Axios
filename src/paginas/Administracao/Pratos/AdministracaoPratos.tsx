@@ -14,7 +14,6 @@ import {
     TableBody,
     TextField,
     Link,
-    AppBar
 } from '@mui/material'
 
 const AdministracaoPratos = () => {
